@@ -57,8 +57,8 @@ namespace Tetris
             }
             public Canvas()
             {
-                Columns = 10;
-                Rows = 20;
+                Columns = 40;
+                Rows = 40;
                 Cells = new List<Cell>();
                 for (int row = 0; row < Rows; row++)
                 {
@@ -110,6 +110,21 @@ namespace Tetris
             public Stop OnStop
             {
                 get; set;
+            }
+            protected Point ApplyTransform(Matrix matr,Point p)
+            {
+                var xNew = matr.M11 * p.X + matr.M21 * p.Y + matr.OffsetX;
+                var yNew = matr.M12 * p.X + matr.M22 * p.Y + matr.OffsetY;
+                return new Point(xNew, yNew);
+            }
+            public void Rotate()
+            {
+                foreach (var cell in this.Cells)
+                {
+                    var rowPrev = cell.Row-Y;
+                    cell.Row = (cell.Column-X)+ Y;
+                    cell.Column = rowPrev+X;
+                }
             }
             public void MoveLeft(Canvas cnv)
             {
@@ -321,8 +336,8 @@ namespace Tetris
             public BlueRicky()
             {
                 Cells = new List<Cell>() { new Cell(0, 0), new Cell(1, 0), new Cell(1, 1), new Cell(1, 2) };
-                Width = 2;
-                Height = 3;
+                Width = 3;
+                Height = 2;
                 MyBrush = Brushes.Orange;
             }
         }
@@ -330,7 +345,7 @@ namespace Tetris
         Tetris CurrentTetris;
         List<Tetris> Objects = new List<Tetris>();
         DispatcherTimer Timer = new DispatcherTimer();
-        int CellA = 50;
+        int CellA = 25;
         public void MoveLeft()
         {
             CurrentTetris.MoveLeft(MainCnvs);
@@ -448,6 +463,10 @@ namespace Tetris
             if (e.Key == Key.Right)
             {
                 MoveRight();
+            }
+            if(e.Key == Key.R)
+            {
+                Objects[Objects.Count - 1].Rotate();
             }
         }
     }
