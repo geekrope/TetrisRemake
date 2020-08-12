@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Canvas x:Name="Cnvs" KeyDown="MoveItem"/>
-
+        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas Width="1000" Height="1000" x:Name="Cnvs" KeyDown="MoveItem"/>
+        </Viewbox>
     </Grid>
 </Window>

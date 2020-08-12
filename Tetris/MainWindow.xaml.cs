@@ -57,8 +57,8 @@ namespace Tetris
             }
             public Canvas()
             {
-                Columns = 40;
-                Rows = 40;
+                Columns = 10;
+                Rows = 20;
                 Cells = new List<Cell>();
                 for (int row = 0; row < Rows; row++)
                 {
@@ -123,11 +123,11 @@ namespace Tetris
                 {
                     var rowPrev = cell.Row-Y;
                     cell.Row = (cell.Column-X)+ Y;
-                    cell.Column = rowPrev+X;
-                    var widthPrev = Width;
-                    Width = Height;
-                    Height = widthPrev;
+                    cell.Column = rowPrev+X;                  
                 }
+                var widthPrev = Width;
+                Width = Height;
+                Height = widthPrev;
             }
             public void MoveLeft(Canvas cnv)
             {
@@ -348,7 +348,7 @@ namespace Tetris
         Tetris CurrentTetris;
         List<Tetris> Objects = new List<Tetris>();
         DispatcherTimer Timer = new DispatcherTimer();
-        int CellA = 25;
+        int CellA = 50;
         public void MoveLeft()
         {
             CurrentTetris.MoveLeft(MainCnvs);
@@ -415,6 +415,32 @@ namespace Tetris
             CurrentTetris.OnStop += CreateNewItem;
             var window = Window.GetWindow(this);
             window.KeyDown += MoveItem;
+            Cnvs.Width = MainCnvs.Columns * CellA;
+            Cnvs.Height = MainCnvs.Rows * CellA;
+            for (int x = CellA; x < CellA * MainCnvs.Columns; x += CellA)
+            {
+                var y1 = 0;
+                var y2 = MainCnvs.Rows* CellA;
+                var line = new Line();
+                line.Stroke = Brushes.Black;
+                line.Y1 = y1;
+                line.Y2 = y2;
+                line.X1 = x;
+                line.X2 = x;
+                Cnvs.Children.Add(line);
+            }
+            for (int y = CellA; y < CellA * MainCnvs.Rows; y += CellA)
+            {
+                var x1 = 0;
+                var x2 = MainCnvs.Columns * CellA;
+                var line = new Line();
+                line.Stroke = Brushes.Black;
+                line.Y1 = y;
+                line.Y2 = y;
+                line.X1 = x1;
+                line.X2 = x2;
+                Cnvs.Children.Add(line);
+            }
         }
         public void CreateNewItem()
         {
