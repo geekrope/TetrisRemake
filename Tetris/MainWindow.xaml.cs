@@ -446,7 +446,7 @@ namespace Tetris
             if (rand == 6)
             {
                 CurrentTetris = new OrangeRicky();
-            }
+            }            
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
         }
