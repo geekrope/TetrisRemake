@@ -124,6 +124,9 @@ namespace Tetris
                     var rowPrev = cell.Row-Y;
                     cell.Row = (cell.Column-X)+ Y;
                     cell.Column = rowPrev+X;
+                    var widthPrev = Width;
+                    Width = Height;
+                    Height = widthPrev;
                 }
             }
             public void MoveLeft(Canvas cnv)
@@ -467,6 +470,8 @@ namespace Tetris
             if(e.Key == Key.R)
             {
                 Objects[Objects.Count - 1].Rotate();
+                SetCells();
+                SetCanvasCells();
             }
         }
     }
