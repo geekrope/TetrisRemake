@@ -111,9 +111,10 @@ namespace Tetris
             {
                 get; set;
             }
-            protected int GetMaxX(Cell[] cells)
+            double acc;
+            protected double GetMaxX(Cell[] cells)
             {
-                var max = int.MinValue;
+                var max = double.MinValue;
                 foreach (var cell in cells)
                 {
                     if(cell.Column> max)
@@ -123,9 +124,9 @@ namespace Tetris
                 }
                 return max;
             }
-            protected int GetMaxY(Cell[] cells)
+            protected double GetMaxY(Cell[] cells)
             {
-                var max = int.MinValue;
+                var max = double.MinValue;
                 foreach (var cell in cells)
                 {
                     if (cell.Row > max)
@@ -135,9 +136,9 @@ namespace Tetris
                 }
                 return max;
             }
-            protected int GetMinX(Cell[] cells)
+            protected double GetMinX(Cell[] cells)
             {
-                var min = int.MaxValue;
+                var min = double.MaxValue;
                 foreach (var cell in cells)
                 {
                     if (cell.Column < min)
@@ -147,9 +148,9 @@ namespace Tetris
                 }
                 return min;
             }
-            protected int GetMinY(Cell[] cells)
+            protected double GetMinY(Cell[] cells)
             {
-                var min = int.MaxValue;
+                var min = double.MaxValue;
                 foreach (var cell in cells)
                 {
                     if (cell.Row < min)
@@ -187,9 +188,13 @@ namespace Tetris
                 int index = 0;
                 foreach (var cell in this.Cells)
                 {                   
-                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, -1*(cell.Row-Y) + X+Width/2);                                     
+                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+Width/2);  
+                    if(acc>=1)
+                    {
+                        rotated[index].Column += (int)acc;
+                    }
                     index++;
-                }
+                }                
                 foreach (var cell in cnv.Cells)
                 {
                     foreach (var cell2 in rotated)
@@ -200,6 +205,10 @@ namespace Tetris
                         }
                     }
                 }
+                if (acc >= 1)
+                {
+                    acc = 0;
+                }                             
                 var rectNext = GetBounds(rotated);                
                 if (rectNext.X + rectNext.Width > cnv.Columns)
                 {
@@ -224,6 +233,7 @@ namespace Tetris
                     Width = (int)rectNext.Width;
                     Height = (int)rectNext.Height;                    
                     Cells = rotated.ToList();
+                    acc += (double)Width / 2 - Math.Floor((double)Width / 2);
                 }                
             }
             public void MoveLeft(Canvas cnv)
@@ -233,7 +243,7 @@ namespace Tetris
                 foreach (var cell in this.Cells)
                 {
                     var ind = cell.Column + (cell.Row) * cnv.Columns;
-                    cnv.Cells[ind].Filled = false;
+                    cnv.Cells[(int)ind].Filled = false;
                 }
                 foreach (var cell in cnv.Cells)
                 {
@@ -266,7 +276,7 @@ namespace Tetris
                 foreach (var cell in this.Cells)
                 {
                     var ind = cell.Column + (cell.Row) * cnv.Columns;
-                    cnv.Cells[ind].Filled = false;
+                    cnv.Cells[(int)ind].Filled = false;
                 }
                 foreach (var cell in cnv.Cells)
                 {
@@ -299,7 +309,7 @@ namespace Tetris
                 foreach (var cell in this.Cells)
                 {
                     var ind = cell.Column + (cell.Row) * cnv.Columns;
-                    cnv.Cells[ind].Filled = false;
+                    cnv.Cells[(int)ind].Filled = false;
                 }
                 foreach (var cell in cnv.Cells)
                 {
@@ -333,7 +343,7 @@ namespace Tetris
                 foreach (var cell in this.Cells)
                 {
                     var ind = cell.Column + (cell.Row) * cnv.Columns;
-                    cnv.Cells[ind].Filled = false;
+                    cnv.Cells[(int)ind].Filled = false;
                 }
                 var index = objs.IndexOf(this);
                 foreach (var cell in cnv.Cells)
@@ -474,7 +484,7 @@ namespace Tetris
                 foreach (var cell in obj.Cells)
                 {
                     var ind = cell.Column + (cell.Row) * MainCnvs.Columns;
-                    MainCnvs.Cells[ind].Filled = true;
+                    MainCnvs.Cells[(int)ind].Filled = true;
                 }
             }
         }
@@ -491,7 +501,7 @@ namespace Tetris
             {
                 foreach (var cell in obj.Cells)
                 {
-                    var poly = (Polygon)Cnvs.Children[cell.Column + cell.Row * MainCnvs.Columns];
+                    var poly = (Polygon)Cnvs.Children[(int)cell.Column + (int)cell.Row * MainCnvs.Columns];
                     poly.Fill = obj.MyBrush;
                 }
             }
