@@ -5,10 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tetris"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" MinHeight="1000" Height="1900" Width="950">
     <Grid>
         <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Canvas Width="1000" Height="1000" x:Name="Cnvs" KeyDown="MoveItem"/>
+            <Canvas Width="500" Height="1000" x:Name="Cnvs" KeyDown="MoveItem"/>
         </Viewbox>
+        <Label Name="Title"  Content="Tetris Game" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" FontSize="72" RenderTransformOrigin="0.5,0.5" Foreground="#FF5B8FFF">
+            <!--<Label.Effect>
+                <DropShadowEffect Color="#FF75BAFF" BlurRadius="20" ShadowDepth="10" Direction="0" Opacity="0.8"/>
+            </Label.Effect>-->
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-3.422"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
     </Grid>
 </Window>

@@ -441,6 +441,7 @@ namespace Tetris
                 line.X2 = x2;
                 Cnvs.Children.Add(line);
             }
+            Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory+"/" + "NeonLights-22d.ttf"), "Neon Lights");
         }
         public void CreateNewItem()
         {
