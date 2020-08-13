@@ -5,23 +5,48 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tetris"
         mc:Ignorable="d"
-        Title="MainWindow" MinHeight="1000" Height="1900" Width="950">
+        Title="MainWindow" MinHeight="1000" Height="1900" Width="950" Cursor="Arrow" WindowState="Maximized" WindowStyle="None">
     <Grid>
-        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Canvas Width="500" Height="1000" x:Name="Cnvs" KeyDown="MoveItem"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Viewbox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas Width="500" Height="1000" x:Name="Cnvs" KeyDown="MoveItem" MouseDown="Cnvs_MouseDown"/>
         </Viewbox>
-        <Label Name="Title"  Content="Tetris Game" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" FontSize="72" RenderTransformOrigin="0.5,0.5" Foreground="#FF5B8FFF">
-            <!--<Label.Effect>
-                <DropShadowEffect Color="#FF75BAFF" BlurRadius="20" ShadowDepth="10" Direction="0" Opacity="0.8"/>
-            </Label.Effect>-->
-            <Label.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="-3.422"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Label.RenderTransform>
-        </Label>
+        <Grid>
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFE1FFAD" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Viewbox RenderTransformOrigin="0.5,0.5">
+                <Viewbox.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Viewbox.RenderTransform>
+                <Label Name="Title" Content="Tetris Game" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="72" Foreground="#FF5B8FFF">
+                </Label>
+            </Viewbox>
+            <Viewbox Grid.Column="1" HorizontalAlignment="Left">
+                <Label Margin="100,0,0,0" Name="Score" Content="Score - 0" FontSize="72" Foreground="#FF5B8FFF">
+                </Label>
+            </Viewbox>
+            <Canvas Grid.Column="2" MouseEnter="Exit_MouseEnter" Name="Exit" MouseLeave="Exit_MouseLeave" MouseDown="Exit_MouseDown">
+                <Rectangle Name="ExitFill"  RadiusX="10" RadiusY="10" Canvas.Left="0" Canvas.Top="0" Width="100" Height="100"/>
+                <Line X1="10" Y1="10" X2="90" Y2="90" Stroke="Red" StrokeThickness="10"/>
+                <Line X1="10" Y1="90" X2="90" Y2="10" Stroke="Red" StrokeThickness="10"/>
+            </Canvas>
+        </Grid>
     </Grid>
 </Window>

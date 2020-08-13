@@ -111,23 +111,62 @@ namespace Tetris
             {
                 get; set;
             }
-            protected Point ApplyTransform(Matrix matr,Point p)
+            protected Point ApplyTransform(Matrix matr, Point p)
             {
                 var xNew = matr.M11 * p.X + matr.M21 * p.Y + matr.OffsetX;
                 var yNew = matr.M12 * p.X + matr.M22 * p.Y + matr.OffsetY;
                 return new Point(xNew, yNew);
             }
-            public void Rotate()
+            public void Rotate(Canvas cnv)
             {
-                foreach (var cell in this.Cells)
+                foreach (var cell in cnv.Cells)
                 {
-                    var rowPrev = cell.Row-Y;
-                    cell.Row = (cell.Column-X)+ Y;
-                    cell.Column = rowPrev+X;                  
+                    foreach (var cell2 in Cells)
+                    {
+                        if(cell.Row == cell2.Row)
+                        {
+                            if (cell.Column == cell2.Column)
+                            {
+                                cell.Filled = false;
+                            }
+                        }
+                    }
                 }
-                var widthPrev = Width;
-                Width = Height;
-                Height = widthPrev;
+                var canMove = true;
+                var rotated = new Cell[Cells.Count];
+                int index = 0;
+                foreach (var cell in this.Cells)
+                {                   
+                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, -1 * (cell.Row-Y) + X);                                     
+                    index++;
+                }
+                foreach (var cell in cnv.Cells)
+                {
+                    foreach (var cell2 in rotated)
+                    {
+                        if (cell.Column == cell2.Column - 1 && cell.Row == cell2.Row && cell.Filled)
+                        {
+                            canMove = false;
+                        }
+                    }
+                }
+                var widthNext = Height;
+                var heightNext = Width;
+                if (this.X + widthNext > cnv.Columns)
+                {
+                    canMove = false;
+                }
+                if (this.Y + heightNext > cnv.Rows)
+                {
+                    canMove = false;
+                }
+                if(canMove)
+                {
+                    var widthPrev = Width;
+                    Width = Height;
+                    Height = widthPrev;
+                    Cells = rotated.ToList();
+                }                
             }
             public void MoveLeft(Canvas cnv)
             {
@@ -318,10 +357,10 @@ namespace Tetris
         {
             public Teewee()
             {
-                Cells = new List<Cell>() { new Cell(0,0), new Cell(1, 0), new Cell(2, 0), new Cell(1, 1) };
+                Cells = new List<Cell>() { new Cell(0, 0), new Cell(1, 0), new Cell(2, 0), new Cell(1, 1) };
                 Width = 2;
                 Height = 3;
-                MyBrush = new SolidColorBrush(Color.FromArgb(255,102,255,0));
+                MyBrush = new SolidColorBrush(Color.FromArgb(255, 102, 255, 0));
             }
         }
         class OrangeRicky : Tetris
@@ -349,6 +388,8 @@ namespace Tetris
         List<Tetris> Objects = new List<Tetris>();
         DispatcherTimer Timer = new DispatcherTimer();
         int CellA = 50;
+        int ScoreDelta = 10;
+        int ScoreCount = 0;
         public void MoveLeft()
         {
             CurrentTetris.MoveLeft(MainCnvs);
@@ -387,14 +428,68 @@ namespace Tetris
                 var poly = (Polygon)Cnvs.Children[index];
                 poly.Fill = Brushes.Transparent;
                 index++;
-            }            
+            }
             foreach (var obj in Objects)
             {
                 foreach (var cell in obj.Cells)
                 {
-                    var poly = (Polygon)Cnvs.Children[cell.Column+ cell.Row*MainCnvs.Columns];
-                    poly.Fill= obj.MyBrush;                    
-                }                
+                    var poly = (Polygon)Cnvs.Children[cell.Column + cell.Row * MainCnvs.Columns];
+                    poly.Fill = obj.MyBrush;
+                }
+            }
+        }
+        public void ClearLines()
+        {
+            for (int row = 0; row <= MainCnvs.Rows; row++)
+            {
+                var clear = false;
+                var colsFilled = 0;
+                foreach (var obj in Objects)
+                {
+                    if (obj.Disabled)
+                    {
+                        foreach (var cell in obj.Cells)
+                        {
+                            if (cell.Row == row)
+                            {
+                                colsFilled++;
+                            }
+                        }
+                    }
+                }
+                if (colsFilled == MainCnvs.Columns)
+                {
+                    clear = true;
+                    ScoreCount += ScoreDelta;
+                    Score.Content = "Score - " + ScoreCount;
+                }
+                for (int index1 = 0; index1 < Objects.Count; index1++)
+                {
+                    for (int index2 = 0; index2 < Objects[index1].Cells.Count; index2++)
+                    {
+                        if (Objects[index1].Cells[index2].Row == row && clear)
+                        {
+                            Objects[index1].Cells.RemoveAt(index2);
+                            index2--;
+                        }
+                    }
+                }
+                if (clear)
+                {
+                    foreach (var obj in Objects)
+                    {
+                        if (obj.Disabled)
+                        {
+                            foreach (var cell in obj.Cells)
+                            {
+                                if (cell.Row < row)
+                                {
+                                    cell.Row++;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         public MainWindow()
@@ -420,7 +515,7 @@ namespace Tetris
             for (int x = CellA; x < CellA * MainCnvs.Columns; x += CellA)
             {
                 var y1 = 0;
-                var y2 = MainCnvs.Rows* CellA;
+                var y2 = MainCnvs.Rows * CellA;
                 var line = new Line();
                 line.Stroke = Brushes.Black;
                 line.Y1 = y1;
@@ -441,12 +536,13 @@ namespace Tetris
                 line.X2 = x2;
                 Cnvs.Children.Add(line);
             }
-            Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory+"/" + "NeonLights-22d.ttf"), "Neon Lights");
+            Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
+            Score.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
         }
         public void CreateNewItem()
         {
             var rand = new Random().Next(7);
-            if(rand == 0)
+            if (rand == 0)
             {
                 CurrentTetris = new SmashBoy();
             }
@@ -473,7 +569,7 @@ namespace Tetris
             if (rand == 6)
             {
                 CurrentTetris = new OrangeRicky();
-            }            
+            }
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
         }
@@ -482,6 +578,7 @@ namespace Tetris
             Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
             SetCells();
             SetCanvasCells();
+            ClearLines();
         }
 
         private void MoveItem(object sender, KeyEventArgs e)
@@ -494,11 +591,38 @@ namespace Tetris
             {
                 MoveRight();
             }
-            if(e.Key == Key.R)
+            if (e.Key == Key.R)
             {
-                Objects[Objects.Count - 1].Rotate();
+                Objects[Objects.Count - 1].Rotate(MainCnvs);
                 SetCells();
                 SetCanvasCells();
+            }
+        }
+
+        private void Exit_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(128, 235, 235, 235));
+        }
+
+        private void Exit_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+        }
+
+        private void Exit_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Cnvs_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Timer.IsEnabled)
+            {
+                Timer.Stop();
+            }
+            else
+            {
+                Timer.Start();
             }
         }
     }
