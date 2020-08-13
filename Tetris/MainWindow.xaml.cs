@@ -137,7 +137,7 @@ namespace Tetris
                 int index = 0;
                 foreach (var cell in this.Cells)
                 {                   
-                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, -1 * (cell.Row-Y) + X);                                     
+                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, (cell.Row-Y) + X);                                     
                     index++;
                 }
                 foreach (var cell in cnv.Cells)
