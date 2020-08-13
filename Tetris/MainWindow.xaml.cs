@@ -111,11 +111,61 @@ namespace Tetris
             {
                 get; set;
             }
-            protected Point ApplyTransform(Matrix matr, Point p)
+            protected int GetMaxX(Cell[] cells)
             {
-                var xNew = matr.M11 * p.X + matr.M21 * p.Y + matr.OffsetX;
-                var yNew = matr.M12 * p.X + matr.M22 * p.Y + matr.OffsetY;
-                return new Point(xNew, yNew);
+                var max = int.MinValue;
+                foreach (var cell in cells)
+                {
+                    if(cell.Column> max)
+                    {
+                        max = cell.Column;
+                    }
+                }
+                return max;
+            }
+            protected int GetMaxY(Cell[] cells)
+            {
+                var max = int.MinValue;
+                foreach (var cell in cells)
+                {
+                    if (cell.Row > max)
+                    {
+                        max = cell.Row;
+                    }
+                }
+                return max;
+            }
+            protected int GetMinX(Cell[] cells)
+            {
+                var min = int.MaxValue;
+                foreach (var cell in cells)
+                {
+                    if (cell.Column < min)
+                    {
+                        min = cell.Column;
+                    }
+                }
+                return min;
+            }
+            protected int GetMinY(Cell[] cells)
+            {
+                var min = int.MaxValue;
+                foreach (var cell in cells)
+                {
+                    if (cell.Row < min)
+                    {
+                        min = cell.Row;
+                    }
+                }
+                return min;
+            }
+            public Rect GetBounds(Cell[] cells)
+            {
+                var x = GetMinX(cells);
+                var y = GetMinY(cells);
+                var width = GetMaxX(cells) - x;
+                var height = GetMaxY(cells) - y;
+                return new Rect(x,y,width+1,height + 1);
             }
             public void Rotate(Canvas cnv)
             {
@@ -137,7 +187,7 @@ namespace Tetris
                 int index = 0;
                 foreach (var cell in this.Cells)
                 {                   
-                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, (cell.Row-Y) + X);                                     
+                    rotated[index] = new Cell(1 * (cell.Column - X) + Y, -1*(cell.Row-Y) + X+Width/2);                                     
                     index++;
                 }
                 foreach (var cell in cnv.Cells)
@@ -150,21 +200,29 @@ namespace Tetris
                         }
                     }
                 }
-                var widthNext = Height;
-                var heightNext = Width;
-                if (this.X + widthNext > cnv.Columns)
+                var rectNext = GetBounds(rotated);                
+                if (rectNext.X + rectNext.Width > cnv.Columns)
                 {
                     canMove = false;
                 }
-                if (this.Y + heightNext > cnv.Rows)
+                if (rectNext.Y + rectNext.Height > cnv.Rows)
                 {
                     canMove = false;
                 }
-                if(canMove)
+                if(rectNext.X<0)
                 {
-                    var widthPrev = Width;
-                    Width = Height;
-                    Height = widthPrev;
+                    canMove = false;
+                }
+                if (rectNext.Y < 0)
+                {
+                    canMove = false;
+                }
+                if (canMove)
+                {
+                    X = (int)rectNext.X;
+                    Y = (int)rectNext.Y;
+                    Width = (int)rectNext.Width;
+                    Height = (int)rectNext.Height;                    
                     Cells = rotated.ToList();
                 }                
             }
