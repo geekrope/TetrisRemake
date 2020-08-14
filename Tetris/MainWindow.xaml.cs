@@ -31,6 +31,14 @@ namespace Tetris
             {
                 get; set;
             }
+            public double RealColumn
+            {
+                get; set;
+            }
+            public double RealRow
+            {
+                get; set;
+            }
             public bool Filled
             {
                 get; set;
@@ -39,6 +47,11 @@ namespace Tetris
             {
                 Row = row;
                 Column = column;
+            }
+            public Cell(double row, double column)
+            {
+                RealRow = row;
+                RealColumn = column;
             }
         }
         class Canvas
@@ -188,13 +201,18 @@ namespace Tetris
                 int index = 0;
                 foreach (var cell in this.Cells)
                 {                   
-                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+Width/2);  
-                    if(acc>=1)
-                    {
-                        rotated[index].Column += (int)acc*2;
-                    }
+                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+(double)Width/2);  
+                    //if(acc>=1)
+                    //{
+                    //    rotated[index].Column += (int)acc*2;
+                    //}
                     index++;
-                }                
+                } 
+                foreach(var rot in rotated)
+                {
+                    rot.Column = (int)Math.Ceiling(rot.RealColumn);
+                    rot.Row = (int)Math.Ceiling(rot.RealRow);
+                }
                 foreach (var cell in cnv.Cells)
                 {
                     foreach (var cell2 in rotated)
