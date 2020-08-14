@@ -191,7 +191,7 @@ namespace Tetris
                     rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+Width/2);  
                     if(acc>=1)
                     {
-                        rotated[index].Column += (int)acc;
+                        rotated[index].Column += (int)acc*2;
                     }
                     index++;
                 }                
