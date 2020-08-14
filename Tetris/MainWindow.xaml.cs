@@ -692,12 +692,12 @@ namespace Tetris
 
         private void Exit_MouseEnter(object sender, MouseEventArgs e)
         {
-            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(128, 235, 235, 235));
+            //ExitFill.Fill = new SolidColorBrush(Color.FromArgb(128, 235, 235, 235));
         }
 
         private void Exit_MouseLeave(object sender, MouseEventArgs e)
         {
-            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            //ExitFill.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
         }
 
         private void Exit_MouseDown(object sender, MouseButtonEventArgs e)
