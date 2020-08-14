@@ -30,15 +30,7 @@ namespace Tetris
             public int Row
             {
                 get; set;
-            }
-            public double RealColumn
-            {
-                get; set;
-            }
-            public double RealRow
-            {
-                get; set;
-            }
+            }           
             public bool Filled
             {
                 get; set;
@@ -50,8 +42,8 @@ namespace Tetris
             }
             public Cell(double row, double column)
             {
-                RealRow = row;
-                RealColumn = column;
+                Row = (int)Math.Ceiling(row);
+                Column = (int)Math.Ceiling(column);
             }
         }
         class Canvas
@@ -123,8 +115,7 @@ namespace Tetris
             public Stop OnStop
             {
                 get; set;
-            }
-            double acc;
+            }            
             protected double GetMaxX(Cell[] cells)
             {
                 var max = double.MinValue;
@@ -201,18 +192,9 @@ namespace Tetris
                 int index = 0;
                 foreach (var cell in this.Cells)
                 {                   
-                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+(double)Width/2);  
-                    //if(acc>=1)
-                    //{
-                    //    rotated[index].Column += (int)acc*2;
-                    //}
+                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+(double)Width/2);                     
                     index++;
-                } 
-                foreach(var rot in rotated)
-                {
-                    rot.Column = (int)Math.Ceiling(rot.RealColumn);
-                    rot.Row = (int)Math.Ceiling(rot.RealRow);
-                }
+                }               
                 foreach (var cell in cnv.Cells)
                 {
                     foreach (var cell2 in rotated)
@@ -222,11 +204,7 @@ namespace Tetris
                             canMove = false;
                         }
                     }
-                }
-                if (acc >= 1)
-                {
-                    acc = 0;
-                }                             
+                }                                            
                 var rectNext = GetBounds(rotated);                
                 if (rectNext.X + rectNext.Width > cnv.Columns)
                 {
@@ -250,8 +228,7 @@ namespace Tetris
                     Y = (int)rectNext.Y;
                     Width = (int)rectNext.Width;
                     Height = (int)rectNext.Height;                    
-                    Cells = rotated.ToList();
-                    acc += (double)Width / 2 - Math.Floor((double)Width / 2);
+                    Cells = rotated.ToList();                    
                 }                
             }
             public void MoveLeft(Canvas cnv)
@@ -578,6 +555,33 @@ namespace Tetris
                 }
             }
         }
+        public void Die()
+        {
+            bool dead = false;
+            foreach(var obj in Objects)
+            {
+                foreach(var cell in obj.Cells)
+                {
+                    if(cell.Row == 0&&obj.Disabled)
+                    {
+                        dead = true;
+                    }
+                }
+            }
+            if(dead)
+            {
+                Timer.Stop();
+                var label = new Label();
+                label.Content = "Game Over";
+                label.Foreground = new SolidColorBrush(Color.FromArgb(255, 138, 3, 3));
+                label.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory+"/" + "ShallowGraveBB.ttf"), "ShallowGrave BB");
+                label.FontSize = 140;
+                label.HorizontalAlignment = HorizontalAlignment.Center;
+                label.VerticalAlignment = VerticalAlignment.Center;
+                label.SetValue(Grid.RowProperty, 1);
+                MainGrid.Children.Add(label);
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -665,6 +669,7 @@ namespace Tetris
             SetCells();
             SetCanvasCells();
             ClearLines();
+            Die();
         }
 
         private void MoveItem(object sender, KeyEventArgs e)
