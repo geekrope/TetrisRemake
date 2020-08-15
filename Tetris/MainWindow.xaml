@@ -44,9 +44,9 @@
             </Viewbox>
             <Canvas Grid.Column="2" MouseEnter="Exit_MouseEnter" Name="Exit" MouseLeave="Exit_MouseLeave" MouseDown="Exit_MouseDown">
                 <Rectangle Name="ExitFill"  RadiusX="10" RadiusY="10" Canvas.Left="0" Canvas.Top="0" Width="100" Height="100"/>
-                <Line X1="10" Y1="10" X2="90" Y2="90" Stroke="Red" StrokeThickness="10"/>
-                <Line X1="10" Y1="90" X2="90" Y2="10" Stroke="Red" StrokeThickness="10"/>
-            </Canvas>
+                <Line Name="CloseLine1" X1="10" Y1="10" X2="90" Y2="90" Stroke="Red" StrokeThickness="10"/>
+                <Line Name="CloseLine2" X1="10" Y1="90" X2="90" Y2="10" Stroke="Red" StrokeThickness="10"/>
+            </Canvas> 
         </Grid>
     </Grid>
 </Window>

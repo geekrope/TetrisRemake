@@ -723,12 +723,16 @@ namespace Tetris
 
         private void Exit_MouseEnter(object sender, MouseEventArgs e)
         {
-            //ExitFill.Fill = new SolidColorBrush(Color.FromArgb(128, 235, 235, 235));
+            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+            CloseLine1.Stroke = Brushes.White;
+            CloseLine2.Stroke = Brushes.White;
         }
 
         private void Exit_MouseLeave(object sender, MouseEventArgs e)
         {
-            //ExitFill.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            ExitFill.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            CloseLine1.Stroke = Brushes.Red;
+            CloseLine2.Stroke = Brushes.Red;
         }
 
         private void Exit_MouseDown(object sender, MouseButtonEventArgs e)
