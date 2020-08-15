@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.IO;
 
 namespace Tetris
 {
@@ -598,6 +599,7 @@ namespace Tetris
                 MainGrid.Children.Add(label);
             }
         }
+        System.Media.SoundPlayer SoundPlayer;
         public MainWindow()
         {
             InitializeComponent();
@@ -645,6 +647,10 @@ namespace Tetris
             Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
             Score.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
             CurrentTetris.MoveToCenter(MainCnvs);
+            SoundPlayer = new System.Media.SoundPlayer(Environment.CurrentDirectory + "/" + $"music{new Random().Next(3)}.wav");
+            SoundPlayer.Load();
+            System.Threading.Thread.Sleep(500);
+            SoundPlayer.PlayLooping();
         }
         public void CreateNewItem()
         {
