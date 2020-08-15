@@ -115,7 +115,16 @@ namespace Tetris
             public Stop OnStop
             {
                 get; set;
-            }            
+            }     
+            public void MoveToCenter(Canvas cnv)
+            {
+                var x = (int)((double)(cnv.Columns-Width)/2);
+                foreach(var cell in Cells)
+                {
+                    cell.Column += x;
+                }
+                X = x;
+            }
             protected double GetMaxX(Cell[] cells)
             {
                 var max = double.MinValue;
@@ -446,6 +455,7 @@ namespace Tetris
                 MyBrush = Brushes.Orange;
             }
         }
+        int Interval = 100;
         Canvas MainCnvs = new Canvas();
         Tetris CurrentTetris;
         List<Tetris> Objects = new List<Tetris>();
@@ -539,6 +549,11 @@ namespace Tetris
                 }
                 if (clear)
                 {
+                    Interval -= 5;
+                    if(Interval>=50)
+                    {
+                        Timer.Interval = new TimeSpan(Interval * 10000);
+                    }                    
                     foreach (var obj in Objects)
                     {
                         if (obj.Disabled)
@@ -555,6 +570,7 @@ namespace Tetris
                 }
             }
         }
+        public bool StopDropping = false;        
         public void Die()
         {
             bool dead = false;
@@ -628,6 +644,7 @@ namespace Tetris
             }
             Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
             Score.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
+            CurrentTetris.MoveToCenter(MainCnvs);
         }
         public void CreateNewItem()
         {
@@ -662,6 +679,8 @@ namespace Tetris
             }
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
+            CurrentTetris.MoveToCenter(MainCnvs);
+            StopDropping = true;
         }
         public void UpdateScene(object sender, EventArgs eventArgs)
         {
@@ -687,6 +706,18 @@ namespace Tetris
                 Objects[Objects.Count - 1].Rotate(MainCnvs);
                 SetCells();
                 SetCanvasCells();
+            }
+            if (e.Key == Key.Down)
+            {
+                Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
+            }
+            if (e.Key == Key.Space)
+            {
+                StopDropping = false;
+                for (; !StopDropping; )
+                {
+                    Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
+                }                
             }
         }
 
