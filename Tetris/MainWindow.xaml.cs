@@ -360,9 +360,9 @@ namespace Tetris
                             canMove = false;
                             if (OnStop != null && index == objs.Count - 1)
                             {
-                                OnStop();
-                                Disabled = true;
+                                OnStop();                               
                             }
+                            Disabled = true;
                         }
                     }
                 }
