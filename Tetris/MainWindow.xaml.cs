@@ -209,7 +209,7 @@ namespace Tetris
                 {
                     foreach (var cell2 in rotated)
                     {
-                        if (cell.Column == cell2.Column - 1 && cell.Row == cell2.Row && cell.Filled)
+                        if (cell.Column == cell2.Column && cell.Row == cell2.Row && cell.Filled)
                         {
                             canMove = false;
                         }
