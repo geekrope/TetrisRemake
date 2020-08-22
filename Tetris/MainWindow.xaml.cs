@@ -735,14 +735,18 @@ namespace Tetris
             CurrentTetris.OnStop += CreateNewItem;
             CurrentTetris.MoveToCenter(MainCnvs);            
         }
-        public void UpdateScene(object sender, EventArgs eventArgs)
+        public void UpdateGraphics()
         {
-            SetCells();
-            Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
             SetCells();
             SetCanvasCells();
             ClearLines();
             Die();
+        }
+        public void UpdateScene(object sender, EventArgs eventArgs)
+        {
+            SetCells();
+            Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);            
+            UpdateGraphics();
         }
 
         private void MoveItem(object sender, KeyEventArgs e)
@@ -751,32 +755,32 @@ namespace Tetris
             {
                 SetCells();               
                 MoveLeft();
-                UpdateScene(new object(), new EventArgs());
+                UpdateGraphics();
             }
             if (e.Key == Key.Right)
             {
                 SetCells();               
                 MoveRight();
-                UpdateScene(new object(), new EventArgs());
+                UpdateGraphics();
             }
             if (e.Key == Key.R)
             {
                 SetCells();
                 Objects[Objects.Count - 1].Rotate(MainCnvs);
-                UpdateScene(new object(), new EventArgs());
+                UpdateGraphics();
             }
             if (e.Key == Key.Up)
             {
                 SetCells();
                 Objects[Objects.Count - 1].Rotate(MainCnvs);
-                UpdateScene(new object(), new EventArgs());
+                UpdateGraphics();
             }
             if (e.Key == Key.Down)
             {
                 SetCells();
                 SetCanvasCells();
                 Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
-                UpdateScene(new object(), new EventArgs());
+                UpdateGraphics();
             }
             if (e.Key == Key.Space)
             {
@@ -785,7 +789,7 @@ namespace Tetris
                 {
                     SetCells();                   
                     Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
-                    UpdateScene(new object(), new EventArgs());
+                    UpdateGraphics();
                 }
             }
         }
