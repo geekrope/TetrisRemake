@@ -605,7 +605,7 @@ namespace Tetris
             InitializeComponent();
             CurrentTetris = new SmashBoy();
             Objects.Add(CurrentTetris);
-            Timer.Interval = new TimeSpan(100 * 10000);
+            Timer.Interval = new TimeSpan(300 * 10000);
             Timer.Tick += UpdateScene;
             for (int row = 0; row < MainCnvs.Rows; row++)
             {
@@ -713,9 +713,16 @@ namespace Tetris
                 SetCells();
                 SetCanvasCells();
             }
+            if (e.Key == Key.Up)
+            {
+                Objects[Objects.Count - 1].Rotate(MainCnvs);
+                SetCells();
+                SetCanvasCells();
+            }
             if (e.Key == Key.Down)
             {
                 Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
+                UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.Space)
             {
