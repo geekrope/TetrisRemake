@@ -591,13 +591,18 @@ namespace Tetris
                 var label = new Label();
                 label.Content = "Game Over";
                 label.Foreground = new SolidColorBrush(Color.FromArgb(255, 138, 3, 3));
-                label.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "ShallowGraveBB.ttf"), "ShallowGrave BB");
+                var fontUri = new Uri(Environment.CurrentDirectory + "/" + "ShallowGraveBB.ttf");
+                if(File.Exists(fontUri.AbsolutePath))
+                {
+                    label.FontFamily = new FontFamily(fontUri, "ShallowGrave BB");
+                }                
                 label.FontSize = 140;
                 label.HorizontalAlignment = HorizontalAlignment.Center;
                 label.VerticalAlignment = VerticalAlignment.Center;
                 label.SetValue(Grid.RowProperty, 1);
                 MainGrid.Children.Add(label);
-            }
+                this.KeyDown -= MoveItem;
+            }            
         }
         System.Media.SoundPlayer SoundPlayer;
         public MainWindow()
