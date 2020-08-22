@@ -31,7 +31,7 @@ namespace Tetris
             public int Row
             {
                 get; set;
-            }           
+            }
             public bool Filled
             {
                 get; set;
@@ -116,11 +116,11 @@ namespace Tetris
             public Stop OnStop
             {
                 get; set;
-            }     
+            }
             public void MoveToCenter(Canvas cnv)
             {
-                var x = (int)((double)(cnv.Columns-Width)/2);
-                foreach(var cell in Cells)
+                var x = (int)((double)(cnv.Columns - Width) / 2);
+                foreach (var cell in Cells)
                 {
                     cell.Column += x;
                 }
@@ -131,7 +131,7 @@ namespace Tetris
                 var max = double.MinValue;
                 foreach (var cell in cells)
                 {
-                    if(cell.Column> max)
+                    if (cell.Column > max)
                     {
                         max = cell.Column;
                     }
@@ -180,7 +180,7 @@ namespace Tetris
                 var y = GetMinY(cells);
                 var width = GetMaxX(cells) - x;
                 var height = GetMaxY(cells) - y;
-                return new Rect(x,y,width+1,height + 1);
+                return new Rect(x, y, width + 1, height + 1);
             }
             public void Rotate(Canvas cnv)
             {
@@ -188,7 +188,7 @@ namespace Tetris
                 {
                     foreach (var cell2 in Cells)
                     {
-                        if(cell.Row == cell2.Row)
+                        if (cell.Row == cell2.Row)
                         {
                             if (cell.Column == cell2.Column)
                             {
@@ -201,10 +201,10 @@ namespace Tetris
                 var rotated = new Cell[Cells.Count];
                 int index = 0;
                 foreach (var cell in this.Cells)
-                {                   
-                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1*(cell.Row-Y) + X+(double)Width/2);                     
+                {
+                    rotated[index] = new Cell(1 * ((int)cell.Column - X) + Y, -1 * (cell.Row - Y) + X + (double)Width / 2);
                     index++;
-                }               
+                }
                 foreach (var cell in cnv.Cells)
                 {
                     foreach (var cell2 in rotated)
@@ -214,8 +214,8 @@ namespace Tetris
                             canMove = false;
                         }
                     }
-                }                                            
-                var rectNext = GetBounds(rotated);                
+                }
+                var rectNext = GetBounds(rotated);
                 if (rectNext.X + rectNext.Width > cnv.Columns)
                 {
                     canMove = false;
@@ -224,7 +224,7 @@ namespace Tetris
                 {
                     canMove = false;
                 }
-                if(rectNext.X<0)
+                if (rectNext.X < 0)
                 {
                     canMove = false;
                 }
@@ -237,9 +237,9 @@ namespace Tetris
                     X = (int)rectNext.X;
                     Y = (int)rectNext.Y;
                     Width = (int)rectNext.Width;
-                    Height = (int)rectNext.Height;                    
-                    Cells = rotated.ToList();                    
-                }                
+                    Height = (int)rectNext.Height;
+                    Cells = rotated.ToList();
+                }
             }
             public void MoveLeft(Canvas cnv)
             {
@@ -360,7 +360,7 @@ namespace Tetris
                             canMove = false;
                             if (OnStop != null && index == objs.Count - 1)
                             {
-                                OnStop();                               
+                                OnStop();
                             }
                             Disabled = true;
                         }
@@ -456,7 +456,7 @@ namespace Tetris
                 MyBrush = Brushes.Orange;
             }
         }
-        int Interval = 100;
+        int Interval = 300;
         Canvas MainCnvs = new Canvas();
         Tetris CurrentTetris;
         List<Tetris> Objects = new List<Tetris>();
@@ -551,10 +551,10 @@ namespace Tetris
                 if (clear)
                 {
                     Interval -= 5;
-                    if(Interval>=50)
+                    if (Interval >= 50)
                     {
                         Timer.Interval = new TimeSpan(Interval * 10000);
-                    }                    
+                    }
                     foreach (var obj in Objects)
                     {
                         if (obj.Disabled)
@@ -571,27 +571,27 @@ namespace Tetris
                 }
             }
         }
-        public bool StopDropping = false;        
+        public bool StopDropping = false;
         public void Die()
         {
             bool dead = false;
-            foreach(var obj in Objects)
+            foreach (var obj in Objects)
             {
-                foreach(var cell in obj.Cells)
+                foreach (var cell in obj.Cells)
                 {
-                    if(cell.Row == 0&&obj.Disabled)
+                    if (cell.Row == 0 && obj.Disabled)
                     {
                         dead = true;
                     }
                 }
             }
-            if(dead)
+            if (dead)
             {
                 Timer.Stop();
                 var label = new Label();
                 label.Content = "Game Over";
                 label.Foreground = new SolidColorBrush(Color.FromArgb(255, 138, 3, 3));
-                label.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory+"/" + "ShallowGraveBB.ttf"), "ShallowGrave BB");
+                label.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "ShallowGraveBB.ttf"), "ShallowGrave BB");
                 label.FontSize = 140;
                 label.HorizontalAlignment = HorizontalAlignment.Center;
                 label.VerticalAlignment = VerticalAlignment.Center;
@@ -605,7 +605,7 @@ namespace Tetris
             InitializeComponent();
             CurrentTetris = new SmashBoy();
             Objects.Add(CurrentTetris);
-            Timer.Interval = new TimeSpan(300 * 10000);
+            Timer.Interval = TimeSpan.FromSeconds(Interval / 1000.0);
             Timer.Tick += UpdateScene;
             for (int row = 0; row < MainCnvs.Rows; row++)
             {
@@ -644,13 +644,24 @@ namespace Tetris
                 line.X2 = x2;
                 Cnvs.Children.Add(line);
             }
-            Title.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
-            Score.FontFamily = new FontFamily(new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf"), "Neon Lights");
+            var font1Uri = new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf");        
+            if (File.Exists(font1Uri.AbsolutePath))
+            {
+                Title.FontFamily = new FontFamily(font1Uri, "Neon Lights");
+                Score.FontFamily = new FontFamily(font1Uri, "Neon Lights");
+            }                     
             CurrentTetris.MoveToCenter(MainCnvs);
-            SoundPlayer = new System.Media.SoundPlayer(Environment.CurrentDirectory + "/" + $"music{new Random().Next(3)}.wav");
-            SoundPlayer.Load();
-            System.Threading.Thread.Sleep(500);
-            SoundPlayer.PlayLooping();
+            var music = Environment.CurrentDirectory + "/" + $"music{new Random().Next(3)}.wav";
+            if (File.Exists(music))
+            {
+                SoundPlayer = new System.Media.SoundPlayer(music);
+                SoundPlayer.Load();
+                SoundPlayer.PlayLooping();
+            }
+            else
+            {
+                Console.WriteLine("Music file was not found");
+            }
         }
         public void CreateNewItem()
         {
@@ -659,37 +670,38 @@ namespace Tetris
             {
                 CurrentTetris = new SmashBoy();
             }
-            if (rand == 1)
+            else if (rand == 1)
             {
                 CurrentTetris = new Hero();
             }
-            if (rand == 2)
+            else if (rand == 2)
             {
                 CurrentTetris = new ClevelandZ();
             }
-            if (rand == 3)
+            else if (rand == 3)
             {
                 CurrentTetris = new BlueRicky();
             }
-            if (rand == 4)
+            else if (rand == 4)
             {
                 CurrentTetris = new RhodeIslandZ();
             }
-            if (rand == 5)
+            else if (rand == 5)
             {
                 CurrentTetris = new Teewee();
             }
-            if (rand == 6)
+            else
             {
                 CurrentTetris = new OrangeRicky();
             }
+            StopDropping = true;
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
-            CurrentTetris.MoveToCenter(MainCnvs);
-            StopDropping = true;
+            CurrentTetris.MoveToCenter(MainCnvs);           
         }
         public void UpdateScene(object sender, EventArgs eventArgs)
         {
+            SetCells();
             Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
             SetCells();
             SetCanvasCells();
@@ -701,36 +713,44 @@ namespace Tetris
         {
             if (e.Key == Key.Left)
             {
+                SetCells();               
                 MoveLeft();
+                UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.Right)
             {
+                SetCells();               
                 MoveRight();
+                UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.R)
             {
-                Objects[Objects.Count - 1].Rotate(MainCnvs);
                 SetCells();
-                SetCanvasCells();
+                Objects[Objects.Count - 1].Rotate(MainCnvs);
+                UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.Up)
             {
-                Objects[Objects.Count - 1].Rotate(MainCnvs);
                 SetCells();
-                SetCanvasCells();
+                Objects[Objects.Count - 1].Rotate(MainCnvs);
+                UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.Down)
             {
+                SetCells();
+                SetCanvasCells();
                 Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
                 UpdateScene(new object(), new EventArgs());
             }
             if (e.Key == Key.Space)
             {
                 StopDropping = false;
-                for (; !StopDropping; )
+                for (; !StopDropping;)
                 {
+                    SetCells();                   
                     Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
-                }                
+                    UpdateScene(new object(), new EventArgs());
+                }
             }
         }
 
