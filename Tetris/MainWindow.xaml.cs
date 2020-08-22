@@ -572,6 +572,29 @@ namespace Tetris
             }
         }
         public bool StopDropping = false;
+        public bool Dead = false;
+        public void Restart()
+        {
+            this.KeyDown += MoveItem;
+            Objects.Clear();
+            CurrentTetris = new SmashBoy();
+            Objects.Add(CurrentTetris);
+            CurrentTetris.OnStop += CreateNewItem;
+            CurrentTetris.MoveToCenter(MainCnvs);
+            Timer.Start();
+            Interval = 300;
+            Timer.Interval = TimeSpan.FromSeconds(Interval / 1000.0);            
+            for(int index=0;index<MainGrid.Children.Count;index++)
+            {
+                var isLabel = MainGrid.Children[index] as Label;
+                if(isLabel!=null)
+                {
+                    MainGrid.Children.RemoveAt(index);
+                    break;
+                }
+            }
+            Dead = false;
+        }
         public void Die()
         {
             bool dead = false;
@@ -590,6 +613,7 @@ namespace Tetris
                 Timer.Stop();
                 var label = new Label();
                 label.Content = "Game Over";
+                label.Name = "GameOverLabel";
                 label.Foreground = new SolidColorBrush(Color.FromArgb(255, 138, 3, 3));
                 var fontUri = new Uri(Environment.CurrentDirectory + "/" + "ShallowGraveBB.ttf");
                 if(File.Exists(fontUri.AbsolutePath))
@@ -602,6 +626,7 @@ namespace Tetris
                 label.SetValue(Grid.RowProperty, 1);
                 MainGrid.Children.Add(label);
                 this.KeyDown -= MoveItem;
+                Dead = true;
             }            
         }
         System.Media.SoundPlayer SoundPlayer;
@@ -610,6 +635,8 @@ namespace Tetris
             InitializeComponent();
             CurrentTetris = new SmashBoy();
             Objects.Add(CurrentTetris);
+            CurrentTetris.OnStop += CreateNewItem;
+            CurrentTetris.MoveToCenter(MainCnvs);
             Timer.Interval = TimeSpan.FromSeconds(Interval / 1000.0);
             Timer.Tick += UpdateScene;
             for (int row = 0; row < MainCnvs.Rows; row++)
@@ -619,8 +646,7 @@ namespace Tetris
                     Cnvs.Children.Add(new Polygon() { Points = new PointCollection(new Point[4] { new Point(column * CellA, row * CellA), new Point(column * CellA + CellA, row * CellA), new Point(column * CellA + CellA, row * CellA + CellA), new Point(column * CellA, row * CellA + CellA) }) });
                 }
             }
-            Timer.Start();
-            CurrentTetris.OnStop += CreateNewItem;
+            Timer.Start();            
             var window = Window.GetWindow(this);
             window.KeyDown += MoveItem;
             Cnvs.Width = MainCnvs.Columns * CellA;
@@ -654,8 +680,7 @@ namespace Tetris
             {
                 Title.FontFamily = new FontFamily(font1Uri, "Neon Lights");
                 Score.FontFamily = new FontFamily(font1Uri, "Neon Lights");
-            }                     
-            CurrentTetris.MoveToCenter(MainCnvs);
+            }                                 
             var music = Environment.CurrentDirectory + "/" + $"music{new Random().Next(3)}.wav";
             if (File.Exists(music))
             {
@@ -670,6 +695,12 @@ namespace Tetris
         }
         public void CreateNewItem()
         {
+            SetCells();
+            Die();
+            if(Dead)
+            {
+                return;
+            }
             var rand = new Random().Next(7);
             if (rand == 0)
             {
@@ -702,7 +733,7 @@ namespace Tetris
             StopDropping = true;
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
-            CurrentTetris.MoveToCenter(MainCnvs);           
+            CurrentTetris.MoveToCenter(MainCnvs);            
         }
         public void UpdateScene(object sender, EventArgs eventArgs)
         {
@@ -787,6 +818,14 @@ namespace Tetris
             else
             {
                 Timer.Start();
+            }
+        }
+
+        private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(Dead)
+            {
+                Restart();
             }
         }
     }

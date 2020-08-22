@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetris"
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="1000" Height="1900" Width="950" Cursor="Arrow" WindowState="Maximized" WindowStyle="None">
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" MouseDown="MainGrid_MouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
