@@ -403,7 +403,7 @@ namespace Tetris
                 Cells = new List<Cell>() { new Cell(0, 0), new Cell(0, 1), new Cell(0, 2), new Cell(0, 3) };
                 Width = 4;
                 Height = 1;
-                MyBrush = Brushes.Purple;
+                MyBrush = Brushes.MediumPurple;
             }
         }
         class ClevelandZ : Tetris
@@ -413,7 +413,7 @@ namespace Tetris
                 Cells = new List<Cell>() { new Cell(0, 0), new Cell(1, 0), new Cell(1, 1), new Cell(2, 1) };
                 Width = 2;
                 Height = 3;
-                MyBrush = Brushes.Blue;
+                MyBrush = Brushes.LightSkyBlue;
             }
         }
         class RhodeIslandZ : Tetris
@@ -423,7 +423,7 @@ namespace Tetris
                 Cells = new List<Cell>() { new Cell(0, 1), new Cell(1, 1), new Cell(1, 0), new Cell(2, 0) };
                 Width = 2;
                 Height = 3;
-                MyBrush = Brushes.Blue;
+                MyBrush = Brushes.LightSkyBlue;
             }
         }
         class Teewee : Tetris
