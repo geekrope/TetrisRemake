@@ -696,26 +696,34 @@ namespace Tetris
             Timer.Start();            
             var window = Window.GetWindow(this);
             window.KeyDown += MoveItem;
-            Cnvs.Width = MainCnvs.Columns * CellA;
+            Cnvs.Width = (MainCnvs.Columns + 1) * CellA;
             Cnvs.Height = MainCnvs.Rows * CellA;
-            for (int x = CellA; x < CellA * MainCnvs.Columns; x += CellA)
+            Cnvs2.Width = (MainCnvs.Columns + 1) * CellA;
+            Cnvs2.Height = MainCnvs.Rows * CellA;
+            Cnvs3.Width = (MainCnvs.Columns + 1) * CellA;
+            Cnvs3.Height = MainCnvs.Rows * CellA;
+            for (int x = CellA; x < CellA * (MainCnvs.Columns+1); x += CellA)
             {
                 var y1 = 0;
                 var y2 = MainCnvs.Rows * CellA;
                 var line = new Line();
-                line.Stroke = Brushes.Black;
+                line.Stroke = Brushes.CornflowerBlue;
                 line.Y1 = y1;
                 line.Y2 = y2;
                 line.X1 = x;
                 line.X2 = x;
+                if(x == CellA * (MainCnvs.Columns))
+                {
+                    line.Stroke = Brushes.Red;
+                }
                 Cnvs.Children.Add(line);
             }
             for (int y = CellA; y < CellA * MainCnvs.Rows; y += CellA)
             {
                 var x1 = 0;
-                var x2 = MainCnvs.Columns * CellA;
+                var x2 = (MainCnvs.Columns + 1) * CellA;
                 var line = new Line();
-                line.Stroke = Brushes.Black;
+                line.Stroke = Brushes.CornflowerBlue;
                 line.Y1 = y;
                 line.Y2 = y;
                 line.X1 = x1;
@@ -733,7 +741,7 @@ namespace Tetris
             {
                 SoundPlayer = new System.Media.SoundPlayer(music);
                 SoundPlayer.Load();
-                SoundPlayer.PlayLooping();
+               // SoundPlayer.PlayLooping();
             }
             else
             {
