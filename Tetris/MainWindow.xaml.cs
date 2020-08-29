@@ -576,27 +576,27 @@ namespace Tetris
                             }
                         }
                     }
-                }
-                if (lines==1)
-                {
-                    ScoreCount += 100;
-                    Score.Content = "Score - " + ScoreCount;
-                }
-                if (lines == 2)
-                {
-                    ScoreCount += 300;
-                    Score.Content = "Score - " + ScoreCount;
-                }
-                if (lines == 3)
-                {
-                    ScoreCount += 700;
-                    Score.Content = "Score - " + ScoreCount;
-                }
-                if (lines == 4)
-                {
-                    ScoreCount += 1500;
-                    Score.Content = "Score - " + ScoreCount;
-                }
+                }                
+            }
+            if (lines == 1)
+            {
+                ScoreCount += 100;
+                Score.Content = "Score - " + ScoreCount;
+            }
+            if (lines == 2)
+            {
+                ScoreCount += 300;
+                Score.Content = "Score - " + ScoreCount;
+            }
+            if (lines == 3)
+            {
+                ScoreCount += 700;
+                Score.Content = "Score - " + ScoreCount;
+            }
+            if (lines == 4)
+            {
+                ScoreCount += 1500;
+                Score.Content = "Score - " + ScoreCount;
             }
         }
         public bool StopDropping = false;
