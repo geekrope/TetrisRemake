@@ -522,6 +522,7 @@ namespace Tetris
         }
         public void ClearLines()
         {
+            var lines = 0;
             for (int row = 0; row <= MainCnvs.Rows; row++)
             {
                 var clear = false;
@@ -541,9 +542,8 @@ namespace Tetris
                 }
                 if (colsFilled == MainCnvs.Columns)
                 {
-                    clear = true;
-                    ScoreCount += ScoreDelta;
-                    Score.Content = "Score - " + ScoreCount;
+                    lines++;
+                    clear = true;                    
                 }
                 for (int index1 = 0; index1 < Objects.Count; index1++)
                 {
@@ -576,6 +576,26 @@ namespace Tetris
                             }
                         }
                     }
+                }
+                if (lines==1)
+                {
+                    ScoreCount += 100;
+                    Score.Content = "Score - " + ScoreCount;
+                }
+                if (lines == 2)
+                {
+                    ScoreCount += 300;
+                    Score.Content = "Score - " + ScoreCount;
+                }
+                if (lines == 3)
+                {
+                    ScoreCount += 700;
+                    Score.Content = "Score - " + ScoreCount;
+                }
+                if (lines == 4)
+                {
+                    ScoreCount += 1500;
+                    Score.Content = "Score - " + ScoreCount;
                 }
             }
         }
