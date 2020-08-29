@@ -14,6 +14,12 @@
         <Viewbox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Canvas Width="500" Height="1000" x:Name="Cnvs" KeyDown="MoveItem" MouseDown="Cnvs_MouseDown"/>
         </Viewbox>
+        <Viewbox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas Width="500" Height="1000" x:Name="Cnvs2" KeyDown="MoveItem" MouseDown="Cnvs_MouseDown"/>
+        </Viewbox>
+        <Viewbox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas Width="500" Height="1000" x:Name="Cnvs3" KeyDown="MoveItem" MouseDown="Cnvs_MouseDown"/>
+        </Viewbox>
         <Grid>
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

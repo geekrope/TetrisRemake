@@ -500,7 +500,11 @@ namespace Tetris
             foreach (var cell in MainCnvs.Cells)
             {
                 var poly = (Polygon)Cnvs.Children[index];
+                var poly2 = (Polygon)Cnvs2.Children[index];
+                var poly3 = (Polygon)Cnvs3.Children[index];
                 poly.Fill = Brushes.Transparent;
+                poly2.Fill = Brushes.Transparent;
+                poly3.Fill = Brushes.Transparent;
                 index++;
             }
             foreach (var obj in Objects)
@@ -508,6 +512,10 @@ namespace Tetris
                 foreach (var cell in obj.Cells)
                 {
                     var poly = (Polygon)Cnvs.Children[(int)cell.Column + (int)cell.Row * MainCnvs.Columns];
+                    var poly2 = (Polygon)Cnvs2.Children[(int)cell.Column + (int)cell.Row * MainCnvs.Columns];
+                    var poly3 = (Polygon)Cnvs3.Children[(int)cell.Column + (int)cell.Row * MainCnvs.Columns];
+                    poly2.Fill = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
+                    poly3.Fill = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
                     poly.Fill = obj.MyBrush;
                 }
             }
@@ -643,7 +651,26 @@ namespace Tetris
             {
                 for (int column = 0; column < MainCnvs.Columns; column++)
                 {
-                    Cnvs.Children.Add(new Polygon() { Points = new PointCollection(new Point[4] { new Point(column * CellA, row * CellA), new Point(column * CellA + CellA, row * CellA), new Point(column * CellA + CellA, row * CellA + CellA), new Point(column * CellA, row * CellA + CellA) }) });
+                    var poly = new Polygon() { Points = new PointCollection(new Point[4] { new Point(column * CellA, row * CellA), new Point(column * CellA + CellA, row * CellA), new Point(column * CellA + CellA, row * CellA + CellA), new Point(column * CellA, row * CellA + CellA) }) };
+                    int width = 10;
+                    var w = CellA;
+                    var h = CellA;
+                    var poly2 = new Polygon() { Points = new PointCollection(new Point[6] {
+                        new Point(w-width, h-width),
+                        new Point(width,h-width),
+                        new Point(0, h),
+                        new Point(w , h),
+                        new Point(w, 0),
+                        new Point(w-width, width)
+                    }) };
+                    poly2.RenderTransform = new MatrixTransform(new Matrix(1, 0, 0, 1, column * CellA, row * CellA));                    
+                    var poly3 = new Polygon() { Points = new PointCollection(new Point[4] { new Point(width, width), new Point(width, h- width), new Point(w - width, h - width), new Point(w - width, width) }) };     
+                    poly3.RenderTransform = new MatrixTransform(new Matrix(1, 0, 0, 1, column * CellA, row * CellA));
+                    poly2.Fill = Brushes.Transparent;
+                    poly3.Fill = Brushes.Transparent;
+                    Cnvs.Children.Add(poly);
+                    Cnvs2.Children.Add(poly2);
+                    Cnvs3.Children.Add(poly3);
                 }
             }
             Timer.Start();            
