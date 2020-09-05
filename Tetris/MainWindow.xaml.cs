@@ -180,7 +180,14 @@ namespace Tetris
                 var y = GetMinY(cells);
                 var width = GetMaxX(cells) - x;
                 var height = GetMaxY(cells) - y;
-                return new Rect(x, y, width + 1, height + 1);
+                if(cells.Length>0)
+                {
+                    return new Rect(x, y, width + 1, height + 1);
+                }
+                else
+                {
+                    return new Rect(0, 0,0, 0);
+                }
             }
             public void Rotate(Canvas cnv)
             {
@@ -341,6 +348,25 @@ namespace Tetris
                 }
 
             }
+            public bool GetCollision(Canvas cnv)
+            {
+                var canMove = true;
+                foreach (var cell in cnv.Cells)
+                {
+                    foreach (var cell2 in Cells)
+                    {
+                        if (cell.Column == cell2.Column && cell.Row == cell2.Row + 1 && cell.Filled)
+                        {
+                            canMove = false;
+                        }
+                        if (cell.Row+1 >= cnv.Rows && cell.Filled)
+                        {
+                            canMove = false;
+                        }
+                    }
+                }
+                return canMove;
+            }
             public void MoveDown(Canvas cnv, List<Tetris> objs)
             {
                 var copy = Cells.ToList();
@@ -361,6 +387,7 @@ namespace Tetris
                             if (OnStop != null && index == objs.Count - 1)
                             {
                                 OnStop();
+                                OnStop = null;
                             }
                             Disabled = true;
                         }
@@ -543,7 +570,7 @@ namespace Tetris
                 if (colsFilled == MainCnvs.Columns)
                 {
                     lines++;
-                    clear = true;                    
+                    clear = true;
                 }
                 for (int index1 = 0; index1 < Objects.Count; index1++)
                 {
@@ -556,6 +583,7 @@ namespace Tetris
                         }
                     }
                 }
+                SetCells();
                 if (clear)
                 {
                     Interval -= 5;
@@ -567,16 +595,46 @@ namespace Tetris
                     {
                         if (obj.Disabled)
                         {
-                            foreach (var cell in obj.Cells)
+                            var bBox = obj.GetBounds(obj.Cells.ToArray());
+                            obj.X = (int)bBox.X;
+                            obj.Y = (int)bBox.Y;
+                            obj.Width = (int)bBox.Width;
+                            obj.Height = (int)bBox.Height;
+                            if (obj.Y < row && obj.Y + obj.Height + 1 <= MainCnvs.Rows)
                             {
-                                if (cell.Row < row)
+                                foreach (var cell in obj.Cells)
                                 {
                                     cell.Row++;
                                 }
+                                obj.Y = (int)obj.GetBounds(obj.Cells.ToArray()).Y;
+                                SetCells();
                             }
                         }
                     }
-                }                
+                    foreach (var obj in Objects)
+                    {
+                        if (obj.Disabled)
+                        {
+                            var stop = false;
+                            for (; !stop;)
+                            {
+                                var canMove = obj.GetCollision(MainCnvs);
+                                if (!canMove || obj.Cells.Count <= 0)
+                                {
+                                    stop = true;
+                                }
+                                foreach (var cell in obj.Cells)
+                                {
+                                    if (canMove)
+                                    {
+                                        cell.Row++;
+                                    }                                   
+                                }
+                                SetCells();
+                            }
+                        }                        
+                    }
+                }
             }
             if (lines == 1)
             {
@@ -611,11 +669,11 @@ namespace Tetris
             CurrentTetris.MoveToCenter(MainCnvs);
             Timer.Start();
             Interval = 300;
-            Timer.Interval = TimeSpan.FromSeconds(Interval / 1000.0);            
-            for(int index=0;index<MainGrid.Children.Count;index++)
+            Timer.Interval = TimeSpan.FromSeconds(Interval / 1000.0);
+            for (int index = 0; index < MainGrid.Children.Count; index++)
             {
                 var isLabel = MainGrid.Children[index] as Label;
-                if(isLabel!=null)
+                if (isLabel != null)
                 {
                     MainGrid.Children.RemoveAt(index);
                     break;
@@ -644,10 +702,10 @@ namespace Tetris
                 label.Name = "GameOverLabel";
                 label.Foreground = new SolidColorBrush(Color.FromArgb(255, 138, 3, 3));
                 var fontUri = new Uri(Environment.CurrentDirectory + "/" + "ShallowGraveBB.ttf");
-                if(File.Exists(fontUri.AbsolutePath))
+                if (File.Exists(fontUri.AbsolutePath))
                 {
                     label.FontFamily = new FontFamily(fontUri, "ShallowGrave BB");
-                }                
+                }
                 label.FontSize = 140;
                 label.HorizontalAlignment = HorizontalAlignment.Center;
                 label.VerticalAlignment = VerticalAlignment.Center;
@@ -655,7 +713,7 @@ namespace Tetris
                 MainGrid.Children.Add(label);
                 this.KeyDown -= MoveItem;
                 Dead = true;
-            }            
+            }
         }
         System.Media.SoundPlayer SoundPlayer;
         public MainWindow()
@@ -675,16 +733,19 @@ namespace Tetris
                     int width = 10;
                     var w = CellA;
                     var h = CellA;
-                    var poly2 = new Polygon() { Points = new PointCollection(new Point[6] {
+                    var poly2 = new Polygon()
+                    {
+                        Points = new PointCollection(new Point[6] {
                         new Point(w-width, h-width),
                         new Point(width,h-width),
                         new Point(0, h),
                         new Point(w , h),
                         new Point(w, 0),
                         new Point(w-width, width)
-                    }) };
-                    poly2.RenderTransform = new MatrixTransform(new Matrix(1, 0, 0, 1, column * CellA, row * CellA));                    
-                    var poly3 = new Polygon() { Points = new PointCollection(new Point[4] { new Point(width, width), new Point(width, h- width), new Point(w - width, h - width), new Point(w - width, width) }) };     
+                    })
+                    };
+                    poly2.RenderTransform = new MatrixTransform(new Matrix(1, 0, 0, 1, column * CellA, row * CellA));
+                    var poly3 = new Polygon() { Points = new PointCollection(new Point[4] { new Point(width, width), new Point(width, h - width), new Point(w - width, h - width), new Point(w - width, width) }) };
                     poly3.RenderTransform = new MatrixTransform(new Matrix(1, 0, 0, 1, column * CellA, row * CellA));
                     poly2.Fill = Brushes.Transparent;
                     poly3.Fill = Brushes.Transparent;
@@ -693,7 +754,7 @@ namespace Tetris
                     Cnvs3.Children.Add(poly3);
                 }
             }
-            Timer.Start();            
+            Timer.Start();
             var window = Window.GetWindow(this);
             window.KeyDown += MoveItem;
             Cnvs.Width = (MainCnvs.Columns + 1) * CellA;
@@ -702,7 +763,7 @@ namespace Tetris
             Cnvs2.Height = MainCnvs.Rows * CellA;
             Cnvs3.Width = (MainCnvs.Columns + 1) * CellA;
             Cnvs3.Height = MainCnvs.Rows * CellA;
-            for (int x = CellA; x < CellA * (MainCnvs.Columns+1); x += CellA)
+            for (int x = CellA; x < CellA * (MainCnvs.Columns + 1); x += CellA)
             {
                 var y1 = 0;
                 var y2 = MainCnvs.Rows * CellA;
@@ -712,7 +773,7 @@ namespace Tetris
                 line.Y2 = y2;
                 line.X1 = x;
                 line.X2 = x;
-                if(x == CellA * (MainCnvs.Columns))
+                if (x == CellA * (MainCnvs.Columns))
                 {
                     line.Stroke = Brushes.Red;
                 }
@@ -730,18 +791,18 @@ namespace Tetris
                 line.X2 = x2;
                 Cnvs.Children.Add(line);
             }
-            var font1Uri = new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf");        
+            var font1Uri = new Uri(Environment.CurrentDirectory + "/" + "NeonLights-22d.ttf");
             if (File.Exists(font1Uri.AbsolutePath))
             {
                 Title.FontFamily = new FontFamily(font1Uri, "Neon Lights");
                 Score.FontFamily = new FontFamily(font1Uri, "Neon Lights");
-            }                                 
+            }
             var music = Environment.CurrentDirectory + "/" + $"music{new Random().Next(3)}.wav";
             if (File.Exists(music))
             {
                 SoundPlayer = new System.Media.SoundPlayer(music);
                 SoundPlayer.Load();
-               // SoundPlayer.PlayLooping();
+                // SoundPlayer.PlayLooping();
             }
             else
             {
@@ -752,7 +813,7 @@ namespace Tetris
         {
             SetCells();
             Die();
-            if(Dead)
+            if (Dead)
             {
                 return;
             }
@@ -788,7 +849,7 @@ namespace Tetris
             StopDropping = true;
             Objects.Add(CurrentTetris);
             CurrentTetris.OnStop += CreateNewItem;
-            CurrentTetris.MoveToCenter(MainCnvs);            
+            CurrentTetris.MoveToCenter(MainCnvs);
         }
         public void UpdateGraphics()
         {
@@ -800,7 +861,7 @@ namespace Tetris
         public void UpdateScene(object sender, EventArgs eventArgs)
         {
             SetCells();
-            Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);            
+            Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
             UpdateGraphics();
         }
 
@@ -808,13 +869,13 @@ namespace Tetris
         {
             if (e.Key == Key.Left)
             {
-                SetCells();               
+                SetCells();
                 MoveLeft();
                 UpdateGraphics();
             }
             if (e.Key == Key.Right)
             {
-                SetCells();               
+                SetCells();
                 MoveRight();
                 UpdateGraphics();
             }
@@ -842,7 +903,7 @@ namespace Tetris
                 StopDropping = false;
                 for (; !StopDropping;)
                 {
-                    SetCells();                   
+                    SetCells();
                     Objects[Objects.Count - 1].MoveDown(MainCnvs, Objects);
                     UpdateGraphics();
                 }
@@ -882,7 +943,7 @@ namespace Tetris
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(Dead)
+            if (Dead)
             {
                 Restart();
             }
