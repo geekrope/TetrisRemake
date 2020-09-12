@@ -611,29 +611,29 @@ namespace Tetris
                             }
                         }
                     }
-                    foreach (var obj in Objects)
-                    {
-                        if (obj.Disabled)
-                        {
-                            var stop = false;
-                            for (; !stop;)
-                            {
-                                var canMove = obj.GetCollision(MainCnvs);
-                                if (!canMove || obj.Cells.Count <= 0)
-                                {
-                                    stop = true;
-                                }
-                                foreach (var cell in obj.Cells)
-                                {
-                                    if (canMove)
-                                    {
-                                        cell.Row++;
-                                    }                                   
-                                }
-                                SetCells();
-                            }
-                        }                        
-                    }
+                    //foreach (var obj in Objects)
+                    //{
+                    //    if (obj.Disabled)
+                    //    {
+                    //        var stop = false;
+                    //        for (; !stop;)
+                    //        {
+                    //            var canMove = obj.GetCollision(MainCnvs);
+                    //            if (!canMove || obj.Cells.Count <= 0)
+                    //            {
+                    //                stop = true;
+                    //            }
+                    //            foreach (var cell in obj.Cells)
+                    //            {
+                    //                if (canMove)
+                    //                {
+                    //                    cell.Row++;
+                    //                }                                   
+                    //            }
+                    //            SetCells();
+                    //        }
+                    //    }                        
+                    //}
                 }
             }
             if (lines == 1)
